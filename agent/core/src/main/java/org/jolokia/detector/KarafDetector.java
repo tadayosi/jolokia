@@ -16,13 +16,14 @@ package org.jolokia.detector;
  * limitations under the License.
  */
 
-import java.lang.management.ManagementFactory;
-import java.util.Set;
+import org.jolokia.backend.executor.MBeanServerExecutor;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
-
-import org.jolokia.backend.executor.MBeanServerExecutor;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import java.lang.management.ManagementFactory;
+import java.util.Set;
 
 /**
  * Detector for Apache Karaf OSGi container
@@ -47,6 +48,18 @@ public class KarafDetector extends AbstractServerDetector {
      */
     @Override
     public void addMBeanServers(Set<MBeanServerConnection> pServers) {
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        try {
+            MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+            JMXConnector connectorServer = (JMXConnector) mbeanServer.invoke(
+                    new ObjectName("connector:name=rmi"),
+                    "toJMXConnector",
+                    new Object[]{ null },
+                    new String[]{ "java.util.Map" });
+            connectorServer.connect();
+            pServers.add(connectorServer.getMBeanServerConnection());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 }
