@@ -48,6 +48,8 @@
 
     var _jolokiaConstructorFunc = function ($) {
 
+        // preprocess-umd: BEGIN
+
         // Default parameters for GET and POST requests
         var DEFAULT_CLIENT_PARAMS = {
             type:"POST",
@@ -76,7 +78,8 @@
          * An object containing the default parameters can be provided as argument. For the possible parameters
          * see {@link #request()}.
          *
-         * @param param either a string in which case it is used as the URL to the agent or
+         * @constructor
+         * @param {string | Object} param either a string in which case it is used as the URL to the agent or
          *              an object with the default parameters as key-value pairs
          */
         function Jolokia(param) {
@@ -990,6 +993,8 @@
         Jolokia.prototype.isError = Jolokia.isError = function(resp) {
             return resp.status == null || resp.status != 200;
         };
+
+        // preprocess-umd: END
 
         // Return back exported function/constructor
         return Jolokia;
