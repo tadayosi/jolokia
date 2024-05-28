@@ -186,6 +186,18 @@ public class ObjectToJsonConverterTest {
         }
     }
 
+    @Test
+    public void convertLong() throws AttributeNotFoundException {
+        long value = 900719925474099123L;
+        Object ret1 = converter.serialize(value, null, SerializeOptions.DEFAULT);
+        assertEquals(900719925474099123L, ret1);
+        SerializeOptions.Builder builder = new SerializeOptions.Builder();
+        Object ret2 = converter.serialize(value, null, builder.serializeLong("string").build());
+        assertEquals("900719925474099123", ret2);
+        Object ret3 = converter.serialize(value, null, builder.serializeLong("bigint").build());
+        assertEquals("900719925474099123n", ret3);
+    }
+
     // ============================================================================
     // TestBeans:
 
