@@ -274,12 +274,21 @@
                     ajaxParams.async = false;
                     var xhr = $.ajax(ajaxParams);
                     if (httpSuccess(xhr)) {
-                        return JSON.parse(xhr.responseText);
+                        return JSON.parse(xhr.responseText, jsonParseReviver(opts));
                     } else {
                         return null;
                     }
                 }
             };
+
+            function jsonParseReviver(opts) {
+                if (opts.convertUnsafeInteger && opts.convertUnsafeInteger === "string") {
+                    return function (_key, value, context) {
+                        return typeof value === "number" && !Number.isSafeInteger(value) ? context : value;
+                    }
+                }
+                return undefined;
+            }
 
             // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             // Scheduler related methods
